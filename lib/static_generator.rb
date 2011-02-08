@@ -21,6 +21,10 @@ module StaticGenerator
     def short_path
       @crawled_page.url.to_s[@url_prefix.length, @crawled_page.url.to_s.length]
     end
+
+    def body
+      @crawled_page.body
+    end
   end
 
   class Crawler
@@ -56,8 +60,10 @@ module StaticGenerator
     end
 
     def generate_folders
-      @pages.each{|p| 
-        FileUtils.mkdir_p( File.expand_path(@destination_path)+File::SEPARATOR+(p.short_path.split('/').join(File::SEPARATOR)) )
+      @pages.each{|page| 
+        directory = File.expand_path(@destination_path)+File::SEPARATOR+(page.short_path.split('/').join(File::SEPARATOR))
+        FileUtils.mkdir_p( directory )
+        File.open("#{directory}/index.html", 'w') {|f| f.write(page.body) }
       }
     end
   end

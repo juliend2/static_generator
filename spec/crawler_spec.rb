@@ -63,7 +63,7 @@ module StaticGenerator
       end
     end
 
-    context 'folders' do
+    context 'folder' do
       it 'should not be created if destination_path does not exist' do
         lambda {
           @crawler = Crawler.new(FakePage.new('home').url, @options.merge({
@@ -77,6 +77,12 @@ module StaticGenerator
         @crawler.crawl!
         File.exists?(File.expand_path('spec/destination_directory/')+File::SEPARATOR+'home').should == true
       end
+
+      it 'should have an index.html file in it' do
+        @crawler = Crawler.new(FakePage.new('home').url, @options)        
+        @crawler.crawl!
+        File.exists?(File.expand_path('spec/destination_directory/')+File::SEPARATOR+'home'+File::SEPARATOR+'index.html').should == true
+      end
     end
 
     context 'folder with a sub folder in it' do
@@ -88,6 +94,15 @@ module StaticGenerator
         @crawler = Crawler.new(pages[0].url, @options)
         @crawler.crawl!
         File.exists?(File.expand_path('spec/destination_directory/')+File::SEPARATOR+'folder'+File::SEPARATOR+'subfolder').should == true
+      end
+
+      it 'should have an index.html file in it' do
+        pages = []
+        pages << FakePage.new('folder', :links => ['folder/subfolder'])
+        pages << FakePage.new('folder/subfolder')
+        @crawler = Crawler.new(pages[0].url, @options)
+        @crawler.crawl!
+        File.exists?(File.expand_path('spec/destination_directory/')+File::SEPARATOR+'folder'+File::SEPARATOR+'subfolder'+File::SEPARATOR+'index.html').should == true
       end
     end
 
