@@ -63,7 +63,7 @@ module StaticGenerator
       end
     end
 
-    context 'creating folders' do
+    context 'folders' do
       before(:each) do
         @options = {
           :destination_path => File.expand_path('spec/destination_directory'),
@@ -75,7 +75,7 @@ module StaticGenerator
         FileUtils.rm_rf(Dir.glob(File.expand_path('spec/destination_directory')+File::SEPARATOR+'*'))
       end
 
-      it 'should not create a base folder if it does not exist' do
+      it 'should not be created if destination_path does not exist' do
         lambda {
           @crawler = Crawler.new(FakePage.new('home').url, @options.merge({
             :destination_path=>File.expand_path('spec/destination_directory/')+File::SEPARATOR+'folder_that_doesnt_exist'
@@ -83,12 +83,32 @@ module StaticGenerator
         }.should raise_error
       end
 
-      #it 'should create one file' do
-      #  @crawler = Crawler.new(FakePage.new('home').url, @options)
-      #  @crawler.crawl!
+      it 'should be created' do
+        @crawler = Crawler.new(FakePage.new('home').url, @options)        
+        @crawler.crawl!
+        File.exists?(File.expand_path('spec/destination_directory/')+File::SEPARATOR+'home').should == true
+      end
+    end
 
-      #  
-      #end
+    context 'folder with a sub folder in it' do
+      before(:each) do
+        @options = {
+          :destination_path => File.expand_path('spec/destination_directory'),
+          :url_prefix => 'http://www.example.com/'
+        }
+      end
+      after(:each) do
+        FileUtils.rm_rf(Dir.glob(File.expand_path('spec/destination_directory')+File::SEPARATOR+'*'))
+      end
+
+      it 'should be created' do
+        pages = []
+        pages << FakePage.new('folder', :links => ['folder/subfolder'])
+        pages << FakePage.new('folder/subfolder')
+        @crawler = Crawler.new(pages[0].url, @options)
+        @crawler.crawl!
+        File.exists?(File.expand_path('spec/destination_directory/')+File::SEPARATOR+'folder'+File::SEPARATOR+'subfolder').should == true
+      end
     end
 
   end
