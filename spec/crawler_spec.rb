@@ -7,7 +7,7 @@ module StaticGenerator
 
       before(:each) do
         @options = {
-          :destination_path => File.expand_path('destination_directory'),
+          :destination_path => File.expand_path('spec/destination_directory/'),
           :url_prefix => 'http://www.example.com/'
         }
       end
@@ -53,17 +53,26 @@ module StaticGenerator
         @crawler.pages[1].short_path.should == 'root/subpage/subsubpage'
 
         # ensure we have a / at the end
-        @crawler = Crawler.new(FakePage.new('root').url, @options.merge({:url_prefix => 'http://www.example.com'}))
-        @crawler.url_prefix[-1,1].should == '/'
+        lambda { 
+          @crawler = Crawler.new(FakePage.new('root').url, @options.merge({:url_prefix => 'http://www.example.com'}))
+        }.should raise_error
       end
     end
 
     context 'creating folders' do
       before(:each) do
         @options = {
-          :destination_path => File.expand_path('destination_directory'),
+          :destination_path => File.expand_path('spec/destination_directory'),
           :url_prefix => 'http://www.example.com/'
         }
+      end
+
+      it 'should not create a base folder if it does not exist' do
+        lambda {
+          @crawler = Crawler.new(FakePage.new('home').url, @options.merge({
+            :destination_path=>File.expand_path('spec/destination_directory/')+File::SEPARATOR+'folder_that_doesnt_exist'
+          }))
+        }.should raise_error
       end
 
       #it 'should create one file' do

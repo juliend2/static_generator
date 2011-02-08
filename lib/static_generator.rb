@@ -1,8 +1,12 @@
 require 'anemone'
+require 'fileutils'
 
 module StaticGenerator
   
   class WrongURLPrefixError < ArgumentError
+  end
+
+  class DestinationPathDoesNotExist < ArgumentError
   end
 
   class Page
@@ -29,12 +33,14 @@ module StaticGenerator
       @url = url
       if @url_prefix.nil? 
         raise WrongURLPrefixError, "Expected an `url_prefix` option for the given URL."
-      elif @url !~ /^#{@url_prefix}/
+      elsif @url !~ /^#{@url_prefix}/
         raise WrongURLPrefixError, "Expected the `url_prefix` option to exist in the given URL."
+      elsif @url_prefix[-1, 1] != '/'
+        raise WrongURLPrefixError, "Expected the `url_prefix` to end with a '/'."
       end
 
-      if @url_prefix[-1, 1] != '/'
-        @url_prefix += '/'
+      if ! File.directory? @destination_path
+        raise DestinationPathDoesNotExist
       end
     end
 
@@ -45,8 +51,15 @@ module StaticGenerator
           @pages << Page.new(page, @url_prefix)
         end
       end
+      
+      generate_folders
     end
 
+    def generate_folders
+      @pages.each{|p| 
+        FileUtils.mkdir_p( File.expand_path(@destination_path)+File::SEPARATOR+(p.short_path.split('/').join(File::SEPARATOR)) )
+      }
+    end
   end
 
 end
