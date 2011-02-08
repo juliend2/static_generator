@@ -64,12 +64,14 @@ module StaticGenerator
 
       it 'should follow a relative link' do
         pages = []
-        pages << FakePage.new('home', :hrefs => ['/subpage'])
+        pages << FakePage.new('home', :hrefs => ['/subpage', 'otherpage'])
         pages << FakePage.new('subpage')
+        pages << FakePage.new('otherpage')
         @crawler = Crawler.new(pages[0].url, @options)
         @crawler.crawl!
         @crawler.pages[0].short_path.should == 'home'
         @crawler.pages[1].short_path.should == 'subpage'
+        @crawler.pages[1].short_path.should == 'otherpage'
       end
     end
 
