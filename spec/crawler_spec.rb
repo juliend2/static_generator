@@ -3,18 +3,18 @@ require 'ap'
 
 module StaticGenerator
   describe Crawler do
+    before(:each) do
+      @options = {
+        :destination_path => File.expand_path('spec/destination_directory'),
+        :url_prefix => 'http://www.example.com/'
+      }
+    end
+
+    after(:each) do
+      FileUtils.rm_rf(Dir.glob(File.expand_path('spec/destination_directory')+File::SEPARATOR+'*'))
+    end
+
     context 'crawling' do
-
-      before(:each) do
-        @options = {
-          :destination_path => File.expand_path('spec/destination_directory/'),
-          :url_prefix => 'http://www.example.com/'
-        }
-      end
-
-      after(:each) do
-        FileUtils.rm_rf(Dir.glob(File.expand_path('spec/destination_directory')+File::SEPARATOR+'*'))
-      end
 
       it 'should find a page that links to another pages' do
         pages = []
@@ -64,17 +64,6 @@ module StaticGenerator
     end
 
     context 'folders' do
-      before(:each) do
-        @options = {
-          :destination_path => File.expand_path('spec/destination_directory'),
-          :url_prefix => 'http://www.example.com/'
-        }
-      end
-
-      after(:each) do
-        FileUtils.rm_rf(Dir.glob(File.expand_path('spec/destination_directory')+File::SEPARATOR+'*'))
-      end
-
       it 'should not be created if destination_path does not exist' do
         lambda {
           @crawler = Crawler.new(FakePage.new('home').url, @options.merge({
@@ -91,15 +80,6 @@ module StaticGenerator
     end
 
     context 'folder with a sub folder in it' do
-      before(:each) do
-        @options = {
-          :destination_path => File.expand_path('spec/destination_directory'),
-          :url_prefix => 'http://www.example.com/'
-        }
-      end
-      after(:each) do
-        FileUtils.rm_rf(Dir.glob(File.expand_path('spec/destination_directory')+File::SEPARATOR+'*'))
-      end
 
       it 'should be created' do
         pages = []
