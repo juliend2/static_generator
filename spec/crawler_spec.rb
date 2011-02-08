@@ -71,7 +71,7 @@ module StaticGenerator
         @crawler.crawl!
         @crawler.pages[0].short_path.should == 'home'
         @crawler.pages[1].short_path.should == 'subpage'
-        @crawler.pages[1].short_path.should == 'otherpage'
+        @crawler.pages[2].short_path.should == 'otherpage'
       end
     end
 
