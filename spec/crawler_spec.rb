@@ -12,6 +12,10 @@ module StaticGenerator
         }
       end
 
+      after(:each) do
+        FileUtils.rm_rf(Dir.glob(File.expand_path('spec/destination_directory')+File::SEPARATOR+'*'))
+      end
+
       it 'should find a page that links to another pages' do
         pages = []
         pages << FakePage.new('0', :links => '1')
@@ -65,6 +69,10 @@ module StaticGenerator
           :destination_path => File.expand_path('spec/destination_directory'),
           :url_prefix => 'http://www.example.com/'
         }
+      end
+
+      after(:each) do
+        FileUtils.rm_rf(Dir.glob(File.expand_path('spec/destination_directory')+File::SEPARATOR+'*'))
       end
 
       it 'should not create a base folder if it does not exist' do
