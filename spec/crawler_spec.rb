@@ -61,6 +61,16 @@ module StaticGenerator
           @crawler = Crawler.new(FakePage.new('root').url, @options.merge({:url_prefix => 'http://www.example.com'}))
         }.should raise_error
       end
+
+      it 'should follow a relative link' do
+        pages = []
+        pages << FakePage.new('home', :hrefs => ['/subpage'])
+        pages << FakePage.new('subpage')
+        @crawler = Crawler.new(pages[0].url, @options)
+        @crawler.crawl!
+        @crawler.pages[0].short_path.should == 'home'
+        @crawler.pages[1].short_path.should == 'subpage'
+      end
     end
 
     context 'folder' do
