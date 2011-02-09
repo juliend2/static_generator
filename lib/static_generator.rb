@@ -9,6 +9,9 @@ module StaticGenerator
   class DestinationPathDoesNotExist < ArgumentError
   end
 
+  class DestinationPathNotWritableError < ArgumentError
+  end
+
   class Page
 
     attr_reader :crawled_page
@@ -45,6 +48,8 @@ module StaticGenerator
 
       if ! File.directory? @destination_path
         raise DestinationPathDoesNotExist
+      elsif ! File.writable? @destination_path
+        raise DestinationPathNotWritableError
       end
     end
 

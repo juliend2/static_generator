@@ -59,7 +59,7 @@ module StaticGenerator
         # ensure we have a / at the end
         lambda { 
           @crawler = Crawler.new(FakePage.new('root').url, @options.merge({:url_prefix => 'http://www.example.com'}))
-        }.should raise_error
+        }.should raise_error WrongURLPrefixError
       end
 
       it 'should follow a relative link' do
@@ -82,7 +82,7 @@ module StaticGenerator
           @crawler = Crawler.new(FakePage.new('home').url, @options.merge({
             :destination_path=>File.expand_path('spec/destination_directory/')+File::SEPARATOR+'folder_that_doesnt_exist'
           }))
-        }.should raise_error
+        }.should raise_error DestinationPathDoesNotExist
       end
 
       it 'should be created' do
@@ -95,6 +95,14 @@ module StaticGenerator
         @crawler = Crawler.new(FakePage.new('home').url, @options)        
         @crawler.crawl!
         File.exists?(File.expand_path('spec/destination_directory/')+File::SEPARATOR+'home'+File::SEPARATOR+'index.html').should == true
+      end
+
+      it 'should throw an error if is not writable' do
+        lambda {
+          @crawler = Crawler.new(FakePage.new('home').url, @options.merge({
+            :destination_path=>File.expand_path('spec/non_writable/')
+          }))
+        }.should raise_error DestinationPathNotWritableError
       end
     end
 
