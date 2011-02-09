@@ -1,0 +1,28 @@
+h1. Why i created Static Generator?
+
+Because i wanted a simple way to grab the HTML from a site generated with my Ruby on Rails CMS. 
+The cool thing with StaticGenerator compared to other solutions (wget), is that when i have an URL like /home/subpage , instead
+of having this file structure:
+
+pre. /home
+    /subpage.html
+
+i have this file structure:
+pre. /home
+    /subpage
+      /index.html
+
+so all the links in the generated site will stay the same.
+
+h2. Usage
+
+pre. StaticGenerator::Crawler.new('http://mysite.com/', {
+    :destination_path => File.expand_path('some/destination/directory'),
+    :url_prefix => 'http://mysite.com/'
+  }) 
+
+h2. Author
+
+Julien Desrosiers
+
+
