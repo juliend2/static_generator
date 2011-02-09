@@ -8,6 +8,7 @@ pre. /home
     /subpage.html
 
 i have this file structure:
+
 pre. /home
     /subpage
       /index.html
@@ -16,10 +17,12 @@ so all the links in the generated site will stay the same.
 
 h2. Usage
 
-pre. StaticGenerator::Crawler.new('http://mysite.com/', {
-    :destination_path => File.expand_path('some/destination/directory'),
-    :url_prefix => 'http://mysite.com/'
-  }) 
+pre. require 'static_generator'
+crawler = StaticGenerator::Crawler.new('http://mysite.com/', {
+  :destination_path => File.expand_path('some/destination/directory'),
+  :url_prefix => 'http://mysite.com/'
+}) 
+crawler.crawl!
 
 h2. Author
 
