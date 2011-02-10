@@ -13,7 +13,7 @@ pre. /home
   /subpage
     /index.html
 
-so all the links in the generated site will stay the same.
+so all the links in the generated site will still be working.
 
 h2. Install
 
