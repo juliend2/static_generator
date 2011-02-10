@@ -18,7 +18,8 @@ so all the links in the generated site will stay the same.
 h2. Usage
 
 pre. require 'static_generator'
-crawler = StaticGenerator::Crawler.new('http://mysite.com/', {
+crawler = StaticGenerator::Crawler.new({
+  :url=>'http://mysite.com/',
   :destination_path => File.expand_path('some/destination/directory'),
   :url_prefix => 'http://mysite.com/'
 }) 
