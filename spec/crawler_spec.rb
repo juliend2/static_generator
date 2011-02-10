@@ -20,7 +20,7 @@ module StaticGenerator
         pages = []
         pages << FakePage.new('0', :links => '1')
         pages << FakePage.new('1')
-        @crawler = Crawler.new(pages[0].url, @options)
+        @crawler = Crawler.new(@options.merge({:url=>pages[0].url}))
         @crawler.crawl!
 
         @crawler.pages.size.should == 2
@@ -31,34 +31,34 @@ module StaticGenerator
         pages << FakePage.new('0', :links => ['1','2'])
         pages << FakePage.new('1')
         pages << FakePage.new('2')
-        @crawler = Crawler.new(pages[0].url, @options)
+        @crawler = Crawler.new(@options.merge({:url=>pages[0].url}))
         @crawler.crawl!
 
         @crawler.pages.size.should == 3
       end
 
       it 'should have the right prefix for the given url' do
-        @crawler = Crawler.new(FakePage.new('home').url, @options)
+        @crawler = Crawler.new(@options.merge({:url=>FakePage.new('home').url}))
         @crawler.crawl!
         @crawler.pages[0].short_path.should == 'home'
 
         pages = []
         pages << FakePage.new('0', :links => ['0/1'])
         pages << FakePage.new('0/1')
-        @crawler = Crawler.new(pages[0].url, @options)
+        @crawler = Crawler.new(@options.merge({:url=>pages[0].url}))
         @crawler.crawl!
         @crawler.pages[1].short_path.should == '0/1'
 
         pages = []
         pages << FakePage.new('root', :links => ['root/subpage/subsubpage'])
         pages << FakePage.new('root/subpage/subsubpage')
-        @crawler = Crawler.new(pages[0].url, @options)
+        @crawler = Crawler.new(@options.merge({:url=>pages[0].url}))
         @crawler.crawl!
         @crawler.pages[1].short_path.should == 'root/subpage/subsubpage'
 
         # ensure we have a / at the end
         lambda { 
-          @crawler = Crawler.new(FakePage.new('root').url, @options.merge({:url_prefix => 'http://www.example.com'}))
+          @crawler = Crawler.new(@options.merge({:url=>FakePage.new('root').url,:url_prefix => 'http://www.example.com'}))
         }.should raise_error WrongURLPrefixError
       end
 
@@ -67,7 +67,7 @@ module StaticGenerator
         pages << FakePage.new('home', :hrefs => ['/subpage', 'otherpage'])
         pages << FakePage.new('subpage')
         pages << FakePage.new('otherpage')
-        @crawler = Crawler.new(pages[0].url, @options)
+        @crawler = Crawler.new(@options.merge({:url=>pages[0].url}))
         @crawler.crawl!
         @crawler.pages[0].short_path.should == 'home'
         @crawler.pages[1].short_path.should == 'subpage'
@@ -79,27 +79,29 @@ module StaticGenerator
     context 'folder' do
       it 'should not be created if destination_path does not exist' do
         lambda {
-          @crawler = Crawler.new(FakePage.new('home').url, @options.merge({
+          @crawler = Crawler.new(@options.merge({
+            :url=>FakePage.new('home').url,
             :destination_path=>File.expand_path('spec/destination_directory/')+File::SEPARATOR+'folder_that_doesnt_exist'
           }))
         }.should raise_error DestinationPathDoesNotExist
       end
 
       it 'should be created' do
-        @crawler = Crawler.new(FakePage.new('home').url, @options)        
+        @crawler = Crawler.new(@options.merge({:url=>FakePage.new('home').url}))        
         @crawler.crawl!
         File.exists?(File.expand_path('spec/destination_directory/')+File::SEPARATOR+'home').should == true
       end
 
       it 'should have an index.html file in it' do
-        @crawler = Crawler.new(FakePage.new('home').url, @options)        
+        @crawler = Crawler.new(@options.merge({:url=>FakePage.new('home').url}))        
         @crawler.crawl!
         File.exists?(File.expand_path('spec/destination_directory/')+File::SEPARATOR+'home'+File::SEPARATOR+'index.html').should == true
       end
 
       it 'should throw an error if is not writable' do
         lambda {
-          @crawler = Crawler.new(FakePage.new('home').url, @options.merge({
+          @crawler = Crawler.new(@options.merge({
+            :url=>FakePage.new('home').url,
             :destination_path=>File.expand_path('spec/non_writable/')
           }))
         }.should raise_error DestinationPathNotWritableError
@@ -112,7 +114,7 @@ module StaticGenerator
         pages = []
         pages << FakePage.new('folder', :links => ['folder/subfolder'])
         pages << FakePage.new('folder/subfolder')
-        @crawler = Crawler.new(pages[0].url, @options)
+        @crawler = Crawler.new(@options.merge({:url=>pages[0].url}))
         @crawler.crawl!
         File.exists?(File.expand_path('spec/destination_directory/')+File::SEPARATOR+'folder'+File::SEPARATOR+'subfolder').should == true
       end
@@ -121,7 +123,7 @@ module StaticGenerator
         pages = []
         pages << FakePage.new('folder', :links => ['folder/subfolder'])
         pages << FakePage.new('folder/subfolder')
-        @crawler = Crawler.new(pages[0].url, @options)
+        @crawler = Crawler.new(@options.merge({:url=>pages[0].url}))
         @crawler.crawl!
         File.exists?(File.expand_path('spec/destination_directory/')+File::SEPARATOR+'folder'+File::SEPARATOR+'subfolder'+File::SEPARATOR+'index.html').should == true
       end

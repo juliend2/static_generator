@@ -34,10 +34,10 @@ module StaticGenerator
 
     attr_reader :pages, :destination_path, :url_prefix
 
-    def initialize(url, opts)
-      @destination_path = opts[:destination_path] || nil
-      @url_prefix = opts[:url_prefix] || nil
-      @url = url
+    def initialize(opts)
+      @destination_path = opts[:destination_path]
+      @url_prefix = opts[:url_prefix]
+      @url = opts[:url]
       if @url_prefix.nil? 
         raise WrongURLPrefixError, "Expected an `url_prefix` option for the given URL."
       elsif @url !~ /^#{@url_prefix}/
