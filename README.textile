@@ -15,6 +15,10 @@ pre. /home
 
 so all the links in the generated site will stay the same.
 
+h2. Install
+
+pre. gem install static_generator
+
 h2. Usage
 
 pre. require 'static_generator'
